@@ -3,6 +3,7 @@
 import { useRef, useState } from 'react';
 import Image from 'next/image';
 import { photos } from '@/data/listing';
+import PhotoSkeleton from './PhotoSkeleton';
 
 interface Props {
   onOpenTour: () => void;
@@ -12,7 +13,11 @@ interface Props {
 export default function Gallery({ onOpenTour, onOpenLightbox }: Props) {
   const grid = photos.slice(0, 5);
   const [mobileIndex, setMobileIndex] = useState(0);
+  const [loaded, setLoaded] = useState<Record<string, boolean>>({});
   const touchStartX = useRef<number | null>(null);
+
+  const markLoaded = (id: string) =>
+    setLoaded((prev) => (prev[id] ? prev : { ...prev, [id]: true }));
 
   const onTouchStart = (e: React.TouchEvent) => {
     touchStartX.current = e.touches[0].clientX;
@@ -36,6 +41,8 @@ export default function Gallery({ onOpenTour, onOpenLightbox }: Props) {
         onTouchStart={onTouchStart}
         onTouchEnd={onTouchEnd}
       >
+        {!loaded[photos[mobileIndex].id] && <PhotoSkeleton />}
+
         <button
           onClick={() => onOpenLightbox(mobileIndex)}
           className="absolute inset-0 h-full w-full focus-visible:z-10"
@@ -46,7 +53,10 @@ export default function Gallery({ onOpenTour, onOpenLightbox }: Props) {
             alt={photos[mobileIndex].alt}
             fill
             priority={mobileIndex === 0}
-            className="object-cover"
+            onLoad={() => markLoaded(photos[mobileIndex].id)}
+            className={`object-cover transition-opacity duration-300 ${
+              loaded[photos[mobileIndex].id] ? 'opacity-100' : 'opacity-0'
+            }`}
             sizes="100vw"
           />
         </button>
@@ -84,12 +94,16 @@ export default function Gallery({ onOpenTour, onOpenLightbox }: Props) {
           className="group relative col-span-2 row-span-2 aspect-square focus-visible:z-10"
           aria-label="Open photo tour, hero image"
         >
+          {!loaded[grid[0].id] && <PhotoSkeleton />}
           <Image
             src={grid[0].url}
             alt={grid[0].alt}
             fill
             priority
-            className="object-cover transition-transform duration-300 group-hover:brightness-90"
+            onLoad={() => markLoaded(grid[0].id)}
+            className={`object-cover transition-opacity duration-300 group-hover:brightness-90 ${
+              loaded[grid[0].id] ? 'opacity-100' : 'opacity-0'
+            }`}
             sizes="(min-width: 1024px) 50vw, 100vw"
           />
         </button>
@@ -101,11 +115,17 @@ export default function Gallery({ onOpenTour, onOpenLightbox }: Props) {
             className={`group relative aspect-square focus-visible:z-10 ${i === 1 ? 'rounded-tr-xl' : ''} ${i === 3 ? 'rounded-br-xl' : ''}`}
             aria-label={`Open photo: ${photo.alt}`}
           >
+            {!loaded[photo.id] && (
+              <PhotoSkeleton className={`${i === 1 ? 'rounded-tr-xl' : ''} ${i === 3 ? 'rounded-br-xl' : ''}`} />
+            )}
             <Image
               src={photo.url}
               alt={photo.alt}
               fill
-              className="object-cover transition-transform duration-300 group-hover:brightness-90"
+              onLoad={() => markLoaded(photo.id)}
+              className={`object-cover transition-opacity duration-300 group-hover:brightness-90 ${
+                loaded[photo.id] ? 'opacity-100' : 'opacity-0'
+              }`}
               sizes="25vw"
             />
           </button>

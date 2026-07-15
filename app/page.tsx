@@ -32,7 +32,7 @@ export default function Home() {
       <div className="h-[57px] sm:h-[65px]" />
       <StickyNav onReserve={() => document.getElementById('reserve-card')?.scrollIntoView({ behavior: 'smooth', block: 'center' })} />
 
-      <main className="mx-auto max-w-[1120px] px-4 py-4 pb-24 sm:px-6 sm:py-6 lg:px-0 lg:pb-6">
+      <main className="mx-auto max-w-[1235px] px-4 pb-24 sm:px-6 lg:px-0">
         <ListingHeader />
 
         <div id="photos" />
