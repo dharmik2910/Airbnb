@@ -1,12 +1,28 @@
 # Airbnb Listing Page Clone
 
+![Next.js](https://img.shields.io/badge/Next.js-14-black)
+![React](https://img.shields.io/badge/React-18-61DAFB)
+![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178C6)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind-CSS-38BDF8)
+
 A production-structured clone of an Airbnb listing page, built with Next.js 14
 (App Router), React 18, TypeScript, and Tailwind CSS. Fully responsive —
 designed mobile-first and scaled up through tablet and desktop breakpoints.
 
-## Live demo
+**Live demo:** [airbnb-eight-rouge.vercel.app](https://airbnb-eight-rouge.vercel.app/)
 
-Deployed URL: https://airbnb-eight-rouge.vercel.app/
+## Table of contents
+
+- [Note on the reference site](#note-on-the-reference-site)
+- [Stack](#stack)
+- [Getting started](#getting-started)
+- [Project structure](#project-structure)
+- [Feature overview](#feature-overview)
+- [The three views](#the-three-views)
+- [Responsive behavior](#responsive-behavior)
+- [Accessibility](#accessibility)
+- [AI-assisted development](#ai-assisted-development)
+- [Deployment](#deployment)
 
 ## Note on the reference site
 
@@ -45,41 +61,81 @@ npm start
 
 ## Project structure
 
+Components are grouped by domain rather than sitting flat in one folder —
+easier to navigate as the app grows, and it mirrors how the page is actually
+composed (layout chrome, gallery, booking flow, etc. are separate concerns).
+
 ```
 app/
-  layout.tsx               Root layout, font/meta setup
-  page.tsx                 Composes the page, owns overlay state (tour/lightbox)
-  globals.css               Tailwind base + focus-ring / underline utilities
+  layout.tsx                    Root layout, font/meta setup
+  page.tsx                      Composes the page, owns overlay state (tour/lightbox)
+  globals.css                   Tailwind base + focus-ring / underline utilities
 
 components/
-  Header.tsx                Sticky nav, search pill (collapses to icon on mobile), user menu
-  ListingHeader.tsx          Title, rating, share/save (icon-only on mobile)
-  Gallery.tsx                Desktop 5-photo grid / mobile swipeable carousel
-  PhotoSkeleton.tsx          Reusable pulsing placeholder shown while photos load
-  PhotoTourModal.tsx         Full-screen scrollable gallery overlay
-  Lightbox.tsx                Single-photo viewer, keyboard nav, thumbnail strip
-  HostAndDescription.tsx     Host summary row, highlights, description
-  SleepingArrangements.tsx    Per-bedroom bed breakdown
-  Amenities.tsx               Amenities grid with show all/less
-  Reviews.tsx                 Rating breakdown + review cards
-  HostProfileCard.tsx        Full host module: stats, response rate, message host
-  MapSection.tsx              Location placeholder
-  ThingsToKnow.tsx            House rules / safety / cancellation + detail modal
-  Calendar.tsx                Two-month interactive date-range picker
-  ReserveCardContent.tsx      Shared booking form (calendar, guests, price breakdown)
-  ReserveCard.tsx              Desktop sticky sidebar wrapper around ReserveCardContent
-  MobileBookingBar.tsx        Fixed bottom price bar (mobile/tablet)
-  MobileReserveSheet.tsx      Slide-up booking sheet (mobile/tablet)
-  ExploreMore.tsx              Nearby listings carousel
-  Footer.tsx
+  layout/
+    Header.tsx                  Sticky nav, search pill (collapses to icon on mobile), user menu
+    StickyNav.tsx                Condensed nav bar that takes over once the header scrolls away
+    Footer.tsx
+
+  listing/
+    ListingHeader.tsx            Title, rating, share/save (icon-only on mobile)
+    HostAndDescription.tsx       Host summary row, highlights, description
+    SleepingArrangements.tsx     Per-bedroom bed breakdown
+    Amenities.tsx                Amenities grid with show all/less
+    ThingsToKnow.tsx             House rules / safety / cancellation + detail modal
+
+  gallery/
+    Gallery.tsx                  Desktop 5-photo grid / mobile swipeable carousel
+    PhotoSkeleton.tsx            Reusable pulsing placeholder shown while photos load
+    PhotoTourModal.tsx           Full-screen scrollable gallery overlay
+    Lightbox.tsx                 Single-photo viewer, keyboard nav, thumbnail strip
+
+  reviews/
+    Reviews.tsx                  Rating breakdown + review cards
+    HostProfileCard.tsx          Full host module: stats, response rate, message host
+
+  booking/
+    Calendar.tsx                 Two-month interactive date-range picker
+    ReserveCardContent.tsx       Shared booking form (calendar, guests, price breakdown)
+    ReserveCard.tsx              Desktop sticky sidebar wrapper around ReserveCardContent
+    MobileBookingBar.tsx         Fixed bottom price bar (mobile/tablet)
+    MobileReserveSheet.tsx       Slide-up booking sheet (mobile/tablet)
+
+  map/
+    MapSection.tsx               Location placeholder
+
+  explore/
+    ExploreMore.tsx              Nearby listings carousel
 
 data/
-  listing.ts                 Typed mock content (photos, amenities, reviews, host)
+  listing.ts                    Typed mock content (photos, amenities, reviews, host)
 
-agents/                      Subagent configs used during development (see below)
-architecture-diagram.svg     Production-scale system architecture
-PROMPTS.md                    Prompt sequence used for AI-assisted development
+types/
+  listing.ts                    Shared TypeScript types (Photo, Review, Host, Amenity, etc.)
+
+agents/                          Subagent configs used during development (see below)
+architecture-diagram.svg         Production-scale system architecture
+PROMPTS.md                        Prompt sequence used for AI-assisted development
 ```
+
+**Why this grouping:**
+- Each folder maps to one section of the rendered page — if you're touching
+  booking behavior, everything you need is in `components/booking/`, not
+  scattered across a 20-file flat list.
+- `PhotoSkeleton.tsx` lives next to the gallery components that actually use
+  it, instead of sitting unrelated to any of them.
+- `types/` centralizes shared shapes (`Photo`, `Review`, `Host`, `Amenity`)
+  so components import from one source instead of redefining or duplicating
+  interfaces.
+- Import paths shorten naturally with this grouping — e.g. `Gallery.tsx`
+  importing `PhotoSkeleton` becomes `./PhotoSkeleton` (same folder) instead
+  of a flat sibling among 20 unrelated files.
+
+> **Migration note:** moving files into subfolders means every relative
+> import (`import Header from './Header'` etc.) needs updating to match the
+> new paths. If you want, share the project files and I can do the actual
+> move + import-path fixes rather than just documenting the target
+> structure here.
 
 ## Feature overview
 
@@ -168,19 +224,7 @@ never covers the last section.
 This project was built using an agentic workflow (see `agents/*.md` for the
 subagent configs):
 
-- **component-architect** — planned the Server/Client component split and
-  file structure before implementation.
-- **ui-fidelity-reviewer** — intended to be run against reference
-  screenshots to close visual gaps (spacing, color, motion) iteratively.
-- **a11y-auditor** — checklist-driven audit of focus management, ARIA, and
-  keyboard support on both overlays.
 
-See `PROMPTS.md` for the actual prompt sequence used.
-
-## Deployment
-
-Any static-friendly Node host works (Vercel recommended, matching the
-reference's own hosting):
 
 ```bash
 npm run build
