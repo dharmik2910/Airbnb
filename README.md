@@ -22,7 +22,6 @@ designed mobile-first and scaled up through tablet and desktop breakpoints.
 - [Responsive behavior](#responsive-behavior)
 - [Accessibility](#accessibility)
 - [AI-assisted development](#ai-assisted-development)
-- [Deployment](#deployment)
 
 ## Note on the reference site
 
