@@ -6,7 +6,7 @@ designed mobile-first and scaled up through tablet and desktop breakpoints.
 
 ## Live demo
 
-_Add your deployed URL here once published (e.g. Vercel)._
+Deployed URL: https://airbnb-eight-rouge.vercel.app/
 
 ## Note on the reference site
 
