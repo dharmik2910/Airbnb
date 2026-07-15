@@ -1,0 +1,115 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 1000" font-family="Helvetica, Arial, sans-serif">
+  <style>
+    .box { fill: #ffffff; stroke: #DDDDDD; stroke-width: 1.5; rx: 10; }
+    .grp { fill: #FFF5F5; stroke: #FF385C; stroke-width: 1.5; rx: 14; }
+    .grp2 { fill: #F5FBFA; stroke: #00A699; stroke-width: 1.5; rx: 14; }
+    .grp3 { fill: #F7F7F7; stroke: #767676; stroke-width: 1.5; rx: 14; }
+    .title { font-size: 20px; font-weight: 700; fill: #222222; }
+    .grouptitle { font-size: 13px; font-weight: 700; fill: #484848; }
+    .label { font-size: 12.5px; fill: #222222; }
+    .sub { font-size: 10.5px; fill: #767676; }
+    .arrow { stroke: #999999; stroke-width: 1.5; fill: none; marker-end: url(#arrow); }
+  </style>
+  <defs>
+    <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L6,3 L0,6 Z" fill="#999999" />
+    </marker>
+  </defs>
+
+  <rect width="1400" height="1000" fill="#FFFFFF" />
+  <text x="30" y="40" class="title">Production-Scale Vacation-Rental Marketplace — Architecture</text>
+  <text x="30" y="62" class="sub">Frontend · Backend · Storage · Search · Deployment — scaling strategy</text>
+
+  <!-- Clients -->
+  <rect x="30" y="90" width="180" height="60" class="box" />
+  <text x="45" y="115" class="label">Web / iOS / Android</text>
+  <text x="45" y="132" class="sub">React Native + Next.js</text>
+
+  <!-- CDN / Edge -->
+  <rect x="260" y="90" width="200" height="60" class="box" />
+  <text x="275" y="115" class="label">CDN + Edge Network</text>
+  <text x="275" y="132" class="sub">Cloudflare / Vercel Edge</text>
+
+  <!-- Frontend group -->
+  <rect x="510" y="80" width="330" height="90" class="grp" />
+  <text x="525" y="98" class="grouptitle">FRONTEND — horizontally scaled</text>
+  <rect x="525" y="105" width="140" height="50" class="box" />
+  <text x="535" y="125" class="label">Next.js (SSR/ISR)</text>
+  <text x="535" y="140" class="sub">Auto-scaled containers</text>
+  <rect x="680" y="105" width="140" height="50" class="box" />
+  <text x="690" y="125" class="label">Static assets</text>
+  <text x="690" y="140" class="sub">Image CDN, cache-first</text>
+
+  <!-- API Gateway -->
+  <rect x="880" y="90" width="200" height="60" class="box" />
+  <text x="895" y="115" class="label">API Gateway / BFF</text>
+  <text x="895" y="132" class="sub">AuthN, rate limiting, routing</text>
+
+  <!-- arrows row 1 -->
+  <path class="arrow" d="M210,120 H260" />
+  <path class="arrow" d="M460,120 H510" />
+  <path class="arrow" d="M840,130 H880" />
+
+  <!-- Backend microservices group -->
+  <rect x="60" y="220" width="1020" height="180" class="grp2" />
+  <text x="80" y="242" class="grouptitle">BACKEND — independently scaled microservices (stateless, containerized)</text>
+
+  <g>
+    <rect x="80" y="260" width="150" height="60" class="box" /><text x="92" y="284" class="label">Listings Svc</text><text x="92" y="300" class="sub">CRUD, availability</text>
+    <rect x="250" y="260" width="150" height="60" class="box" /><text x="262" y="284" class="label">Search Svc</text><text x="262" y="300" class="sub">query + ranking</text>
+    <rect x="420" y="260" width="150" height="60" class="box" /><text x="432" y="284" class="label">Booking Svc</text><text x="432" y="300" class="sub">reservations, locking</text>
+    <rect x="590" y="260" width="150" height="60" class="box" /><text x="602" y="284" class="label">Payments Svc</text><text x="602" y="300" class="sub">PCI-scoped, via Stripe</text>
+    <rect x="760" y="260" width="150" height="60" class="box" /><text x="772" y="284" class="label">Reviews Svc</text><text x="772" y="300" class="sub">ratings, moderation</text>
+    <rect x="930" y="260" width="130" height="60" class="box" /><text x="942" y="284" class="label">Media Svc</text><text x="942" y="300" class="sub">upload, transcode</text>
+  </g>
+
+  <rect x="80" y="335" width="1000" height="50" class="box" />
+  <text x="95" y="355" class="label">Async event bus (Kafka / SQS-SNS): booking.created, payment.confirmed, review.posted, media.processed</text>
+  <text x="95" y="370" class="sub">Decouples services, powers notifications, search re-indexing, and analytics pipelines</text>
+
+  <path class="arrow" d="M980,120 V220" />
+
+  <!-- Storage group -->
+  <rect x="60" y="430" width="480" height="200" class="grp3" />
+  <text x="80" y="452" class="grouptitle">STORAGE — sharded / replicated</text>
+
+  <rect x="80" y="465" width="200" height="60" class="box" /><text x="92" y="489" class="label">Postgres (primary)</text><text x="92" y="505" class="sub">Listings, bookings, users</text>
+  <rect x="300" y="465" width="220" height="60" class="box" /><text x="312" y="489" class="label">Read replicas (multi-AZ)</text><text x="312" y="505" class="sub">Regional read scaling</text>
+
+  <rect x="80" y="540" width="200" height="60" class="box" /><text x="92" y="564" class="label">Redis cluster</text><text x="92" y="580" class="sub">Session + hot-listing cache</text>
+  <rect x="300" y="540" width="220" height="60" class="box" /><text x="312" y="564" class="label">S3 / Object storage</text><text x="312" y="580" class="sub">Photos, docs — CDN-fronted</text>
+
+  <!-- Search group -->
+  <rect x="580" y="430" width="500" height="200" class="grp3" />
+  <text x="600" y="452" class="grouptitle">SEARCH — separately scaled index tier</text>
+
+  <rect x="600" y="465" width="220" height="60" class="box" /><text x="612" y="489" class="label">OpenSearch / Elasticsearch</text><text x="612" y="505" class="sub">Geo + facet + text search</text>
+  <rect x="840" y="465" width="220" height="60" class="box" /><text x="852" y="489" class="label">Indexer workers</text><text x="852" y="505" class="sub">Consume bus, re-index async</text>
+
+  <rect x="600" y="540" width="220" height="60" class="box" /><text x="612" y="564" class="label">Pricing / ranking engine</text><text x="612" y="580" class="sub">Feature store + ML scoring</text>
+  <rect x="840" y="540" width="220" height="60" class="box" /><text x="852" y="564" class="label">Geo cache (Redis geo)</text><text x="852" y="580" class="sub">Fast radius queries</text>
+
+  <path class="arrow" d="M400,335 V430" />
+  <path class="arrow" d="M700,335 V430" />
+
+  <!-- Deployment group -->
+  <rect x="60" y="660" width="1020" height="160" class="grp">
+    <animate />
+  </rect>
+  <text x="80" y="682" class="grouptitle">DEPLOYMENT — multi-region, zero-downtime</text>
+
+  <rect x="80" y="695" width="220" height="55" class="box" /><text x="92" y="717" class="label">Kubernetes (multi-region)</text><text x="92" y="732" class="sub">HPA on CPU + queue depth</text>
+  <rect x="320" y="695" width="220" height="55" class="box" /><text x="332" y="717" class="label">Blue/green + canary CD</text><text x="332" y="732" class="sub">GitHub Actions → ArgoCD</text>
+  <rect x="560" y="695" width="220" height="55" class="box" /><text x="572" y="717" class="label">Global load balancer</text><text x="572" y="732" class="sub">Latency-based routing</text>
+  <rect x="800" y="695" width="240" height="55" class="box" /><text x="812" y="717" class="label">Observability</text><text x="812" y="732" class="sub">Prometheus, Grafana, OTel, Sentry</text>
+
+  <path class="arrow" d="M700,600 V660" />
+
+  <!-- Footer notes -->
+  <text x="30" y="870" class="label" font-weight="700">Scaling strategy summary</text>
+  <text x="30" y="895" class="sub">• Frontend: stateless SSR pods behind CDN + edge cache; ISR revalidates listing pages on write events.</text>
+  <text x="30" y="913" class="sub">• Backend: each domain service scales independently via HPA; booking uses optimistic locking + idempotency keys to avoid double-booking under load.</text>
+  <text x="30" y="931" class="sub">• Storage: Postgres primary/replica split with read routing; hot data cached in Redis; media served via S3 + CDN, never through app servers.</text>
+  <text x="30" y="949" class="sub">• Search: denormalized, eventually-consistent index kept in sync via the event bus so search load never hits the primary DB.</text>
+  <text x="30" y="967" class="sub">• Deployment: multi-region active-active with canary releases; global LB fails over on region health degradation.</text>
+</svg>
